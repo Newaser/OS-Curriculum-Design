@@ -67,36 +67,44 @@ void printArray(int* array, int len){
 }
 
 request trialRequest(){
+    request rq = {
+        1,
+        (int*)malloc(3*sizeof(int))
+    };
     int seq[3] = {0, 0, 0};
-    request rq = {1, seq};
+    memcpy(rq.sequence, seq, 3*sizeof(int));
 
     return rq;
 }
 
 sysStatus trialStatus(){
     //A trail sysStatus DS
-    static int alc[5][3] = {
+    int alc[5][3] = {
         {0, 1, 0},
         {2, 0, 0},
         {3, 0, 3},
         {2, 1, 1},
         {0, 0, 2}
         };
-    static int nd[5][3] = {
+    int nd[5][3] = {
         {0, 0, 2},
         {2, 2, 2},
         {0, 0, 0},
         {1, 0, 0},
         {0, 0, 2}
         };
-    static int ava[3] = {0, 0, 0};
+    int ava[3] = {0, 0, 0};
     
-    sysStatus ss;
-    ss.p_num = 5;
-    ss.r_num = 3;
-    ss.allocation = (int**)alc;
-    ss.need = (int**)nd;
-    ss.available = ava;
+    sysStatus ss = {
+        5,
+        3,
+        (int**)malloc(15*sizeof(int)),
+        (int**)malloc(15*sizeof(int)),
+        (int*)malloc(3*sizeof(int))
+    };
+    memcpy(ss.allocation, alc, 15*sizeof(int));
+    memcpy(ss.need, nd, 15*sizeof(int));
+    memcpy(ss.available, ava, 3*sizeof(int));
 
     return ss;
 }

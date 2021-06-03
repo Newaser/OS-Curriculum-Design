@@ -24,7 +24,7 @@ signal bankers(sysStatus ss, request rq){
     sysStatus next_ss = pre_allocate(ss, rq);
 
     if(securityCheck(next_ss).check == False)
-        return wait;
+        return Wait;
 
     ss = next_ss;
     return Success;
