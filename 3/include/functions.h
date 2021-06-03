@@ -33,6 +33,10 @@ void fill(int* array, int len, int value){
     }
 }
 
+sysStatus importStatus(path f_path){
+    //content: import data from a txt file
+}
+
 void pause(char *prompt, int ascii){
     printf("%s\n", prompt);
     if(ascii == Null){

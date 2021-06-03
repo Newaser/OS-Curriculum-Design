@@ -1,12 +1,9 @@
 #include"..\\include\\security_check.h"
 
-typedef char* path;
-
 int main(){
     /*
     Security Algorithm: Receive a DS of process&resource status, and analyze the security of the system
     */
-    sysStatus importStatus(path f_path);
     sysStatus importTrial(void);
     void securityAlarm(sysStatus ss, security sc);
     void printAllcation(sysStatus ss, security sc);
@@ -20,10 +17,6 @@ int main(){
     pause("\nPress ESC to exit...", 27);
     
     return 0;
-}
-
-sysStatus importStatus(path f_path){
-    //content: import data from a txt file
 }
 
 void securityAlarm(sysStatus ss, security sc){
