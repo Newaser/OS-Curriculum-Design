@@ -1,7 +1,7 @@
 #include<stdarg.h>
 #include"functions.h"
 
-security security_check(sysStatus ss){
+security securityCheck(sysStatus ss){
     /*
     Security Check Algorithm
     */

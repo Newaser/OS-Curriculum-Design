@@ -4,7 +4,7 @@ signal bankers(sysStatus ss, request rq){
     /*
     Banker's Algorithm
     */
-    sysStatus pre_allocate(sysStatus ss);
+   sysStatus pre_allocate(sysStatus ss, request rq);
 
     //Definition of row number and column number for process-resource matrix
     const int m = ss.p_num;
@@ -21,11 +21,16 @@ signal bankers(sysStatus ss, request rq){
             return Wait;
     }
 
-    sysStatus next_ss = pre_allocate(ss);
+    sysStatus next_ss = pre_allocate(ss, rq);
 
-    if(security_check(next_ss).check = False)
-        return Wait;
+    if(securityCheck(next_ss).check == False)
+        return wait;
 
     ss = next_ss;
     return Success;
+}
+
+sysStatus pre_allocate(sysStatus ss, request rq){
+    sysStatus next_ss = ss;
+    return next_ss;
 }

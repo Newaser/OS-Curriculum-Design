@@ -1,17 +1,14 @@
 #define True 1
 #define False 0
 #define Null -1
-#define Success 1
-#define Wait 0
-#define Error -1
 typedef int bool;
 typedef char* path;
 
-enum signal{
-    Success,
+typedef enum signal{
+    Error=-1,
     Wait,
-    Error
-}
+    Success
+} signal;
 
 typedef struct sysStatus{  //system status concerning processes and resources
     int p_num;  //amount of processes
@@ -32,4 +29,4 @@ typedef struct security{
 typedef struct request{
     int p_num;
     int* sequence;
-}
+} request;
