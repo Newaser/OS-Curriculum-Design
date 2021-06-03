@@ -1,22 +1,6 @@
 #include<stdarg.h>
 #include"functions.h"
 
-typedef struct sysStatus{
-    int p_num;  //amount of processes
-    int r_num;  //amount of resources
-
-    //allocation, need matrixes of resources
-    int** allocation;
-    int** need;
-
-    int* available;  //available resources vector
-} sysStatus;
-
-typedef struct security{
-    bool check;
-    int* sequence;
-} security;
-
 security security_check(sysStatus ss){
     /*
     Security Check Algorithm
@@ -68,7 +52,6 @@ security security_check(sysStatus ss){
         }
     }
 }
-
 
 void pre_run(security sc, int m, int n, int process,sysStatus ss, int* work, int* finish){
     for(int resource=0;resource<n;resource++){

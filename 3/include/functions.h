@@ -2,11 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<conio.h>
-
-#define True 1
-#define False 0
-#define Null -1
-typedef int bool;
+#include"definitions.h"
 
 bool all(bool* array, int len){  //if all true
     bool is_all_true = True;
