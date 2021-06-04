@@ -31,6 +31,7 @@ signal bankers(sysStatus ss, request rq){
 }
 
 sysStatus pre_allocate(sysStatus ss, request rq){
+    //content: allocate the requested resources from system to process
     sysStatus next_ss = ss;
     return next_ss;
 }
