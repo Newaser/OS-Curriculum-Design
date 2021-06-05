@@ -1,33 +1,23 @@
+#ifndef _FUNCTIONS_H_
+#define _FUNCTIONS_H_
+#include"queue.h"
+
 #define True 1
 #define False 0
 #define Null -1
+#define SafeSeconds 0.1
+#define MaxCar 5
 typedef int bool;
+typedef int semaphore;
 typedef char* path;
 
-typedef enum orient_c{  //car's oriention type: North, South, Eest, West
-    North, South, Eest, West
-} orient_c;
+typedef enum quaOrient{  //cars' and roads' oriention type(quaternary): North, South, Eest, West
+    North, South, East, West
+} quaOrient;
 
-typedef enum orient_l{  //light's oriention type: North-South, Eest-West
+typedef enum biOrient{  //light's oriention type(binary): North-South, Eest-West
     North_South,
-    Eest_West
-} orient_l;
+    East_West
+} biOrient;
 
-typedef struct car{
-    orient_c from;
-    float across_time;
-} car;
-
-typedef struct light
-{
-    orient_l orientation;
-    double time;
-} light;
-
-typedef struct traffic{
-    car* cars;
-    int car_num;
-    light green_light;
-} traffic;
-
-
+#endif
