@@ -5,10 +5,9 @@
 #include<sys/types.h>
 #include<sys/ipc.h>
 #include<sys/sem.h>
-#include<conio.h>
 #include"definitions.h"
 
-void countDown(float* sec_ptr, float max_sec, char mode){
+void countDown(double* sec_ptr, float max_sec, char mode){
     if(mode == '-'){
         //content: count-down in '-' mode
     }else if(mode == '+'){
@@ -21,15 +20,6 @@ void countDown(float* sec_ptr, float max_sec, char mode){
 
 int initSem(){
     return semget(IPC_PRIVATE, 1, IPC_CREAT | 00666);
-}
-
-void pause(char *prompt, int ascii){
-    printf("%s\n", prompt);
-    if(ascii == Null){
-        getch();
-    }else {
-        while(getch() != ascii);
-    }
 }
 
 void* sharedMem(size_t size){  //content: return a sized, anonymous block of shared memory(mmap)

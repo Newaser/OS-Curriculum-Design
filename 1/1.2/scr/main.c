@@ -1,4 +1,5 @@
-#include <unistd.h>
+#include<unistd.h>
+#include<sys/wait.h>
 
 #include"../include/functions.h"
 #include"../include/PV.h"
@@ -18,13 +19,15 @@ int main(){
     /*
        Traffic Lights Algorithm: ...
     */
-    void lights(double* sec_ptr, semaphore* roads);  //traffic lights process
-    void car(double* sec_ptr, QUEUE* cars, QUEUE** cqs, semaphore mutexCars, semaphore* mutexCqs, semaphore* roads);  // car process
+    void lights_process(double* sec_ptr, semaphore* roads);  //traffic lights process
+    void car_process(double* sec_ptr, QUEUE* cars, QUEUE** cqs, semaphore mutexCars, semaphore* mutexCqs, semaphore* roads);  // car process
     
     //Shared Memory Allocations:
     sec_ptr = (double*)sharedMem(sizeof(double));
     cars = (QUEUE*)sharedMem(sizeof(QUEUE));
-    car_queues = (QUEUE*)sharedMem(4*sizeof(QUEUE));
+    for(int i=0;i<4;i++){
+        car_queues[i] = (QUEUE*)sharedMem(sizeof(QUEUE));
+    }
 
     //Initializations of shared variables:
     *sec_ptr = 0;
@@ -34,14 +37,14 @@ int main(){
     }
 
     //Initializations of semaphores:
-    mutexTf = initSem();
+    mutexCars = initSem();
     for(int i=0;i<4;i++){
         mutexCqs[i] = initSem();
         roads[i] = initSem();
     }
     
     if(fork() == 0){  //traffic lights process
-        lights(sec_ptr, roads);
+        lights_process(sec_ptr, roads);
     }else {  //car processes
         pid_t pid;
         for(int i=0; i<(cars->size); i++){
@@ -49,7 +52,7 @@ int main(){
             if(pid < 0){
                 perror("Error occurred in function \"fork()\"!\n");
             }else if(pid == 0){  //[car process]*car_num
-                car(sec_ptr, tf, car_queues, mutexTf, mutexCqs, roads);
+                car_process(sec_ptr, cars, car_queues, mutexCars, mutexCqs, roads);
             }
         }
         //parent process
@@ -60,27 +63,29 @@ int main(){
 }
 
 
-void lights(double* sec_ptr, semaphore* roads){
+void lights_process(double* sec_ptr, semaphore* roads){
     biOrient red_light = North_South;  //Initially, lights are red at North-South oriention; contrarily, lights are green at East-West.
     while(True){
         red_light = !red_light;  //Invert lights' color of two orientions
         if(red_light == North_South){    //lights red at North-South, block the North, South roads
-            semop(road[North], P(), 1);
-            semop(road[South], P(), 1);
+            semop(roads[North], P(), 1);
+            semop(roads[South], P(), 1);
+            printf("The lights turn red at North-South, green at East-West.\n");
             countDown(sec_ptr, 3, '-');  //a countdown timer in "minus" style
-            semop(road[South], V(), 1);
-            semop(road[North], V(), 1);
+            semop(roads[South], V(), 1);
+            semop(roads[North], V(), 1);
         }else {                          //lights red at East-West, block the East, West roads
-            semop(road[East], P(), 1);
-            semop(road[West], P(), 1);
+            semop(roads[East], P(), 1);
+            semop(roads[West], P(), 1);
+            printf("The lights turn green at North-South, red at East-West.\n");
             countDown(sec_ptr, 3, '+');  //a countdown timer in "plus" style
-            semop(road[West], V(), 1);
-            semop(road[East], V(), 1);
+            semop(roads[West], V(), 1);
+            semop(roads[East], V(), 1);
         }
     }
 }
 
-void car(double* sec_ptr, QUEUE* cars, QUEUE** cqs, semaphore mutexCars, semaphore* mutexCqs, semaphore* roads){
+void car_process(double* sec_ptr, QUEUE* cars, QUEUE** cqs, semaphore mutexCars, semaphore* mutexCqs, semaphore* roads){
     //Take a car from mixed cars to one of the car queues as "me"
     semop(mutexCars, P(), 1);
     car me = deQueue(cars);
@@ -90,7 +95,7 @@ void car(double* sec_ptr, QUEUE* cars, QUEUE** cqs, semaphore mutexCars, semapho
     semop(mutexCars, V(), 1);
 
     //Am I at the front of the queue?
-    while(front(me.from).car_id != me.car_id);
+    while(front(cqs[me.from]).car_id != me.car_id);
 
     //Do I have enough time?
     if(me.from==North || me.from==South){                   //if north or south
@@ -100,12 +105,12 @@ void car(double* sec_ptr, QUEUE* cars, QUEUE** cqs, semaphore mutexCars, semapho
     }
 
     //Cross the road
-    semop(road[me.from], P(), 1);
+    semop(roads[me.from], P(), 1);
     sleep(me.est_time);
-    semop(road[me.from], V(), 1);
+    semop(roads[me.from], V(), 1);
 
     //Broadcast that I have passed the road
-    printf("Car %d crossed the road with %lf secs.", me.car_id, me.est_time);
+    printf("Car %d crossed the road with %lf secs.\n", me.car_id, me.est_time);
 
     //Dequeue me from the waiting queue
     semop(mutexCqs[me.from], P(), 1);

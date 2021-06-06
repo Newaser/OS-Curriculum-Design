@@ -4,7 +4,11 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<unistd.h>
-#include<erron.h>
+#include<errno.h>
+
+typedef enum quaOrient{  //cars' and roads' oriention type(quaternary): North, South, Eest, West
+    North, South, East, West
+} quaOrient;
 
 typedef struct car{
     int car_id;
@@ -40,7 +44,7 @@ int isFull(QUEUE *q)
 }
 QUEUE *createQueue(int maxElements)
 {
-    QUEUE *q = (QUEUE *)malloc(sizeof(struct queueRecord));
+    QUEUE *q = (QUEUE *)malloc(sizeof(QUEUE));
     q->array = (elementType *)malloc(sizeof(elementType) * maxElements);
     q->capacity = maxElements;
     makeEmpty(q);
@@ -88,7 +92,7 @@ elementType front(QUEUE *q)
 elementType deQueue(QUEUE *q)
 {
     if(!isEmpty(q)) {
-        int ret = q->array[q->front];
+        elementType ret = q->array[q->front];
         q->size--;
         q->front = succ(q->front, q);
         return ret; 

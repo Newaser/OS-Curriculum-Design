@@ -11,10 +11,6 @@ typedef int bool;
 typedef int semaphore;
 typedef char* path;
 
-typedef enum quaOrient{  //cars' and roads' oriention type(quaternary): North, South, Eest, West
-    North, South, East, West
-} quaOrient;
-
 typedef enum biOrient{  //light's oriention type(binary): North-South, Eest-West
     North_South,
     East_West
