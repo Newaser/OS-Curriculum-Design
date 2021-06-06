@@ -1,17 +1,17 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include <sys/mman.h>
+#include<sys/mman.h>
 #include<sys/types.h>
 #include<sys/ipc.h>
 #include<sys/sem.h>
-#include"definitions.h"
+#include"queue.h"
 
-void countDown(double* sec_ptr, float max_sec, char mode){
+void countDown(double* sec_ptr, double max_sec, char mode){
     if(mode == '-'){
         //content: count-down in '-' mode
     }else if(mode == '+'){
-        //content; count-down in '+' mode
+        //content: count-down in '+' mode
     }else{
         perror("Invalid mode type!\n");
 
