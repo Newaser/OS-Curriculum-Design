@@ -1,17 +1,28 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<unistd.h>
 #include<sys/mman.h>
 #include<sys/types.h>
 #include<sys/ipc.h>
 #include<sys/sem.h>
 #include"queue.h"
 
-void countDown(double* sec_ptr, double max_sec, char mode){
+void countDown(double* sec_ptr, double max_sec, char mode){  //count down certain seconds
+    int times = (int)(max_sec/SleepGranu);  //times of "for" loop
+    
     if(mode == '-'){
-        //content: count-down in '-' mode
+    	*sec_ptr = -max_sec;
+        for(int i=0; i < times; i++){
+            usleep(SleepGranu*1000000);
+        	*sec_ptr += SleepGranu;
+        }
     }else if(mode == '+'){
-        //content: count-down in '+' mode
+        *sec_ptr = max_sec;
+        for(int i=0; i < times; i++){
+        	usleep(SleepGranu*1000000);
+        	*sec_ptr -= SleepGranu;
+        }
     }else{
         perror("Invalid mode type!\n");
 

@@ -3,7 +3,8 @@
 #define True 1
 #define False 0
 #define Null -1
-#define SafeSeconds 0.1
+#define SleepGranu 0.1
+#define SafeSeconds 0.3
 #define MaxCar 5
 typedef int bool;
 typedef int semaphore;

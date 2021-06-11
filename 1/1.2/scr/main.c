@@ -1,4 +1,3 @@
-#include<unistd.h>
 #include<sys/wait.h>
 
 #include"../include/functions.h"
