@@ -30,9 +30,9 @@ int main(){
 
     //Initializations of shared variables:
     *sec_ptr = 0;
-    //memcpy(cars, importCars("../include/cars_x.txt"), sizeof(QUEUE));
+    memcpy(cars, importCars("../include/cars_use.txt"), sizeof(QUEUE));
     for(int i=0;i<4;i++){
-        memcpy(car_queues[i], createQueue(MaxCar), sizeof(QUEUE));
+        memcpy(car_queues[i], createQueue(MaxCars), sizeof(QUEUE));
     }
 
     //Initializations of semaphores:
@@ -70,14 +70,14 @@ void lights_process(double* sec_ptr, semaphore* roads){
             semop(roads[North], P(), 1);
             semop(roads[South], P(), 1);
             printf("The lights turn red at North-South, green at East-West.\n");
-            countDown(sec_ptr, 3, '-');  //a countdown timer in "minus" style
+            countDown(sec_ptr, LightTime, '-');  //a countdown timer in "minus" style
             semop(roads[South], V(), 1);
             semop(roads[North], V(), 1);
         }else {                          //lights red at East-West, block the East, West roads
             semop(roads[East], P(), 1);
             semop(roads[West], P(), 1);
             printf("The lights turn green at North-South, red at East-West.\n");
-            countDown(sec_ptr, 3, '+');  //a countdown timer in "plus" style
+            countDown(sec_ptr, LightTime, '+');  //a countdown timer in "plus" style
             semop(roads[West], V(), 1);
             semop(roads[East], V(), 1);
         }
