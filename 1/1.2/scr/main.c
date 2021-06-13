@@ -52,7 +52,7 @@ int main(){
         for(int i=0; i < car_num; i++){
             pid = fork();
             if(pid < 0){
-                perror("Error occurred in function \"fork()\"!\n");
+                assertThat("Error occurred in function \"fork()\"!\n");
             }else if(pid == 0){  //[car process]*car_num
                 car_process(sec_ptr, cars, car_queues, mutexCars, mutexCqs, roads);
             }
