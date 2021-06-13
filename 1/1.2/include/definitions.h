@@ -1,14 +1,16 @@
-#include"queue.h"
-
+//Bool values:
 #define True 1
 #define False 0
 #define Null -1
 
-#define LightTime 3
+//Standards:
 #define SafeSeconds 0.3
-#define CountGranu 0.1
+#define CountDownGranu 0.1
 
+//Maximums:
 #define MaxCars 5
+#define MaxLightSeconds 3
+#define MaxLightTurns 10
 typedef int bool;
 typedef int semaphore;
 typedef char* string;
@@ -22,6 +24,8 @@ typedef enum biOrient{  //light's oriention type(binary): North-South, Eest-West
     North_South,
     East_West
 } biOrient;
+
+string ORIENTATIONS[6] = {"North", "South", "East", "West", "North-South", "East-West"};  //strings of orientations
 
 typedef struct car{
     int car_id;
