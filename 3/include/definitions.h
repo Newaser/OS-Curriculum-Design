@@ -3,6 +3,7 @@
 #define Null -1
 typedef int bool;
 typedef char* path;
+typedef char* string;
 
 typedef enum signal{
     Error=-1,

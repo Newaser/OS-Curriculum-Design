@@ -12,7 +12,7 @@ security securityCheck(sysStatus ss){
     const int m = ss.p_num;
     const int n = ss.r_num;
 
-    security sc = {  //return value type
+    security sc = {  //create a security var
         False,
         (int*)malloc(m*sizeof(int))  //*sequence = (int*)*m
     };
