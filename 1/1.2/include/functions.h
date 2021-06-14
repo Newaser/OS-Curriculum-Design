@@ -24,16 +24,8 @@ void countDown(double* sec_ptr, double max_sec, char mode){  //count down certai
         	*sec_ptr -= CountDownGranu;
         }
     }else{
-        perror("Invalid mode type!\n");
+        assertThat("Invalid mode type!\n");
     }
-}
-
-int initSem(){
-    return semget(IPC_PRIVATE, 1, IPC_CREAT | 00666);
-}
-
-void* sharedMem(size_t size){  //content: return a sized, anonymous block of shared memory(mmap)
-    return mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 }
 
 QUEUE* importCars(path f_path){
@@ -49,11 +41,11 @@ QUEUE* importCars(path f_path){
     
     void check_car(quaOrient ori){  //check and enqueue the data of car i
         if(car_i.car_id < 0){
-            perror("Exists one car whose car ID is invalid!\n");
+            assertThat("Exists one car whose car ID is invalid!\n");
         }else if(orientations[ori] >= MaxCars){
-            perror("Exists one direction whose car\'s amount exceeds its max!\n");
+            assertThat("Exists one direction whose car\'s amount exceeds its max!\n");
         }else if(MaxLightSeconds - car_i.est_time <= SafeSeconds){
-            perror("Exists one car which is too slow to pass the road!\n");
+            assertThat("Exists one car which is too slow to pass the road!\n");
         }else {
             car_i.from = ori;
             orientations[ori]++;
@@ -70,7 +62,7 @@ QUEUE* importCars(path f_path){
         
             for(int ori_i=0;ori_i<4+1;ori_i++){  //get car's orientation
                 if(ori_i > 4){
-                    perror("Exists one car whose orientation is invalid!\n");
+                    assertThat("Exists one car whose orientation is invalid!\n");
                 }else if(strcmp(from_i, ORIENTATIONS[ori_i]) == 0){
                     check_car(ori_i);
                 }
@@ -83,5 +75,10 @@ QUEUE* importCars(path f_path){
     return cars;
 }
 
+int initSem(){
+    return semget(IPC_PRIVATE, 1, IPC_CREAT | 00666);
+}
 
-
+void* sharedMem(size_t size){  //content: return a sized, anonymous block of shared memory(mmap)
+    return mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+}

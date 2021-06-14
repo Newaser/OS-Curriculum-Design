@@ -1,0 +1,15 @@
+0 East 1.8
+1 West 2.0
+2 West 2.5
+3 North 1.9
+4 West 1.1
+5 East 1.6
+6 West 0.5
+7 North 1.6
+8 North 1.7
+9 North 0.4
+10 South 1.5
+11 South 0.9
+12 East 1.4
+13 East 0.3
+

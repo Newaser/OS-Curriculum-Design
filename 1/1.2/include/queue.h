@@ -7,6 +7,11 @@
 #include<errno.h>
 #include"definitions.h"
 
+string assertThat(string prompt){
+    printf("%s", prompt);
+    exit(0);
+}
+
 int isEmpty(QUEUE *q)
 {
     return (q->size == 0);
@@ -26,9 +31,9 @@ QUEUE *createQueue(int maxElements)
 void disposeQueue(QUEUE *q)
 {
     if(q != NULL) {
-        free(q->array); 
+        free(q->array);
         free(q);
-    }   
+    }
 }
 void makeEmpty(QUEUE *q)
 {
@@ -51,7 +56,7 @@ void enQueue(elementType element, QUEUE *q)
         q->rear = succ(q->rear, q);
         q->array[q->rear] = element;
     } else {
-        perror("Full queue!\n");
+        assertThat("Full queue!\n");
     }
 }
 elementType front(QUEUE *q)
@@ -59,7 +64,7 @@ elementType front(QUEUE *q)
     if(!isEmpty(q)) {
         return q->array[q->front];  
     } else {
-        perror("Empty queue!\n");
+        assertThat("Empty queue!\n");
     }
 }
 elementType deQueue(QUEUE *q)
@@ -70,7 +75,7 @@ elementType deQueue(QUEUE *q)
         q->front = succ(q->front, q);
         return ret; 
     } else {
-        perror("Empty queue!\n");
+        assertThat("Empty queue!\n");
     }
 }
 
