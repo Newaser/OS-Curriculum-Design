@@ -37,7 +37,7 @@ security securityCheck(sysStatus ss){
         for(process=0;process<m;process++){
             runnable = True;  //Suppose it is runnable initially
             for(resource=0;resource<n;resource++){  //Judge if the process runnable
-                runnable *= (!finish[process]) && (vofM(ss.need,process,resource,n)<=work[resource]);
+                runnable *= (!finish[process]) && (ss.need[process][resource] <= work[resource]);
             }
             //If runnable, break out
             if(runnable) break;
@@ -55,7 +55,7 @@ security securityCheck(sysStatus ss){
 
 void pre_run(security sc, int m, int n, int process,sysStatus ss, int* work, int* finish){
     for(int resource=0;resource<n;resource++){
-        work[resource] += vofM(ss.allocation,process,resource,n);
+        work[resource] += ss.allocation[process][resource];
     }
     finish[process] = True;
     append(sc.sequence, m, process);

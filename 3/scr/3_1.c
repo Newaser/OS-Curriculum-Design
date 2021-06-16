@@ -4,13 +4,19 @@ int main(){
     /*
     Input request stream: Avoid deadlock by Banker's Algorithm
     */
-    //sysStatus ss = importStatus(("..\\DS\\p&r_status_x.txt"));
+    //assertThat("OK\n");
+    //sysStatus ss = importStatus(("..\\DS\\p&r_status_use.txt"));
+    //assertThat("OK\n");
     sysStatus ss = trialStatus();
-    request rq = trialRequest();
+    assertThat("OK\n");
+    //request rq = trialRequest();
+    //assertThat("OK\n");
     printStatus(ss);  //print current p&r status of the system
-
+    //assertThat("OK\n");
+    printf("Please enter a process's request like \"[process num] [requset1] [request2] ...\" such as \"0 1 2 3\".\nEnter \"q/quit\" to exit.\n");
     while(True){  //a loop for inputing request stream
-        //request rq = getRequest();
+        //assertThat("OK\n");
+        request rq = getRequest(ss);
         switch(bankers(ss, rq)){
             case Error:
                 printf("Invalid request!\n");

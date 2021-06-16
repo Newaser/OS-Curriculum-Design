@@ -8,7 +8,7 @@ int main(){
     void printAllocation(sysStatus ss, security sc);
 
     sysStatus ss;
-    //ss = importStatus("..\\DS\\p&r_status_x.txt");   //import data
+    //ss = importStatus("..\\DS\\p&r_status_use.txt");   //import data
     ss = trialStatus();                              //import trial data
     printStatus(ss);                                 //print current p&r status of the system
     security sc = securityCheck(ss);                 //check the security: if secure, return the security sequence
