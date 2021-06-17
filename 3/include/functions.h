@@ -1,6 +1,3 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
 #include<conio.h>
 #include"definitions.h"
 
@@ -62,7 +59,65 @@ void printArray(int* array, int len){
 
 
 //Concerning String:
-bool allInt(string str, int len){
+
+
+string upper(string str){
+    int len = strlen(str);
+
+    int distance = 'a' - 'A';
+    string upper_str = (string) malloc((len+1)*sizeof(char));
+
+    for(int i=0;i<len+1;i++){
+        if(i == len + 1){
+            upper_str[i] = '\0';
+        }else if(str[i] >= 'a' && str[i] <= 'z'){
+            upper_str[i] = str[i] - distance;
+        }else {
+            upper_str[i] = str[i];
+        }
+    }
+
+    return upper_str;
+}
+
+string lower(string str){
+    int len = strlen(str);
+    
+    int distance = 'a' - 'A';
+    string lower_str = (string) malloc((len+1)*sizeof(char));
+
+    for(int i=0;i<len+1;i++){
+        if(i == len + 1){
+            lower_str[i] = '\0';
+        }else if(str[i] >= 'A' && str[i] <= 'Z'){
+            lower_str[i] = str[i] + distance;
+        }else {
+            lower_str[i] = str[i];
+        }
+    }
+
+    return lower_str;
+}
+
+bool strSimilar(string str1, string str2){
+    if(strcmp(lower(str1), lower(str2)) == 0){
+        return True;
+    }else{
+        return False;
+    }
+}
+
+bool strnSimilar(string str1, string str2, int n){
+    if(strncmp(lower(str1), lower(str2), n) == 0){
+        return True;
+    }else{
+        return False;
+    }
+}
+
+bool strAllInt(string str){  //If a string consists all of unsigned int except space
+    int len = strlen(str);
+
     bool int_exists = False;
     for(int i=0;i<len;i++){
         if(str[i] == ' '){
@@ -82,47 +137,23 @@ bool allInt(string str, int len){
     
 }
 
-string upper(string str, int len){
-    int distance = 'a' - 'A';
-    string upper_str = (string) malloc((len+1)*sizeof(char));
-
-    for(int i=0;i<len+1;i++){
-        if(i == len + 1 || str[i] == '\0'){
-            upper_str[i] = '\0';
-            break;
-        }else if(str[i] >= 'a' && str[i] <= 'z'){
-            upper_str[i] = str[i] - distance;
-        }else {
-            upper_str[i] = str[i];
-        }
-    }
-
-    return upper_str;
-}
-
-string lower(string str, int len){
-    int distance = 'a' - 'A';
-    string lower_str = (string) malloc((len+1)*sizeof(char));
-
-    for(int i=0;i<len+1;i++){
-        if(i == len + 1 || str[i] == '\0'){
-            lower_str[i] = '\0';
-            break;
-        }else if(str[i] >= 'A' && str[i] <= 'Z'){
-            lower_str[i] = str[i] + distance;
-        }else {
-            lower_str[i] = str[i];
-        }
-    }
-
-    return lower_str;
-}
-
-
 //Concerning structs:
-request createRequest(int p_num, int r_num){
+security createSecurity(int p_num){
+    security sc = {
+        Null,
+        (int*)malloc(p_num*sizeof(int))
+    };
+
+    return sc;
+}
+
+void destorySecurity(security sc){
+    free(sc.sequence);
+}
+
+request createRequest(int r_num){
     request rq = {
-        p_num,
+        Null,
         (int*)malloc(r_num*sizeof(int))
     };
 
@@ -130,7 +161,7 @@ request createRequest(int p_num, int r_num){
 }
 
 void destroyRequest(request rq){
-    //TODO: destory a request var
+    free(rq.sequence);
 };
 
 sysStatus createSysStatus(int p_num, int r_num){
@@ -145,21 +176,18 @@ sysStatus createSysStatus(int p_num, int r_num){
     return ss;
 }
 
-void destroySysStatus(sysStatus* ss){
-    destoryM(ss->allocation);
-    destoryM(ss->need);
-    free(ss->available);
+void destroySysStatus(sysStatus ss){
+    destoryM(ss.allocation);
+    destoryM(ss.need);
+    free(ss.available);
 };
 
 void sysStatusCopy(sysStatus* ss1, sysStatus* ss2){  //copy the values from ss2 to ss1
     const int m = (ss1->p_num = ss2->p_num);
     const int n = (ss1->r_num = ss2->r_num);
-    //assertThat("OK\n");
     mtxCpy(ss1->allocation, ss2->allocation, 'v');
     mtxCpy(ss1->need, ss2->need, 'v');
-    assertThat("OK\n");
     memcpy(ss1->available, ss2->available, n*sizeof(int));
-    assertThat("OK\n");
 }
 
 
@@ -176,7 +204,7 @@ request getRequest(sysStatus ss){
     int process;
     int seq[n];
     char input[32];
-    char* p = input;
+    char* p = input + strlen("request") + 1;
     int len;
 
     while(True){
@@ -192,21 +220,26 @@ request getRequest(sysStatus ss){
             sscanf(p, "%d%n", &process, &len);
             p += len + 1;
 
-            if(process < 0 || process >= m){
+            if(process >= m){
                 printf("Invalid process number!\n");
+                return EOF;
             }else {
                 for(int i=0;i<n+1;i++){
                     if(i > n){
                         if(sscanf(p, "%d") != EOF){
-                            printf("Requests exceeds resources!\n");
+                            printf("Too many requests of resources!\n");
+                            return EOF;
                         }
                     }else {
-                        sscanf(p, "%d%n", seq + i, &len);
-                        p += len + 1;
+                        if(sscanf(p, "%d%n", seq + i, &len) == EOF){
+                            printf("Too few requests of resources!\n");
+                            return EOF;
+                        }else{
+                            p += len + 1;
+                        }
                     }
                 }
 
-                printArray(seq, n);
                 request rq = createRequest(process, n);
                 rq.p_num = process;
                 memcpy(rq.sequence, seq, n*sizeof(int));
@@ -253,82 +286,26 @@ sysStatus importStatus(path f_path){
     }
 
     //If file invalid
-    fgetc(data_f);
+    fscanf(data_f, "%d");
     if(!feof(data_f)){
         fclose(data_f);
         assertThat("Invalid data file!");
-        destroySysStatus(&ss);
+        destroySysStatus(ss);
     }else {  //Success
         fclose(data_f);
         return ss;
     }
 }
 
-void printStatus(sysStatus ss){
-    /*
-    content: print current p&r status
-    */
-    //define m, n
-    const int m = ss.p_num;
-    const int n = ss.r_num;
 
-    //print available array
-    printf("Available Resoures: ");
-    printArray(ss.available, n);
-    printf("\n");
 
-    //print table head
-    printf("PID\tAllocation\tNeed\n");
-
-    //print table content
-    for(int i=0;i<m;i++){
-        //print PID
-        printf("%d\t", i);
-
-        //print Allocation
-        printRow(ss.allocation, i, 'h');
-        printf("\t\t");
-
-        //print Need
-        printRow(ss.need, i, 'h');
-        printf("\n");
+void securityAlarm(sysStatus ss){
+    security sc = securityCheck(ss);
+    if(sc.check){
+        printf("System is currently safe!\nThe security sequence is:\n");
+        printArray(sc.sequence, ss.p_num);
+    }else {
+        printf("System is not safe!\n");
     }
-    printf("\n");
 }
 
-request trialRequest(){
-    request rq = createRequest(1, 3);
-    int seq[3] = {0, 0, 0};
-    memcpy(rq.sequence, seq, 3*sizeof(int));
-
-    return rq;
-}
-
-sysStatus trialStatus(){
-    //A trail sysStatus DS
-    int alc[5][3] = {
-        {0, 1, 0},
-        {2, 0, 0},
-        {3, 0, 3},
-        {2, 1, 1},
-        {0, 0, 2}
-        };
-    int nd[5][3] = {
-        {0, 0, 2},
-        {2, 2, 2},
-        {0, 0, 0},
-        {1, 0, 0},
-        {0, 0, 2}
-        };
-    int ava[3] = {0, 0, 0};
-    
-    sysStatus ss = createSysStatus(5, 3);
-    fillM(ss.allocation, 0);
-    fillM(ss.need, 0);
-    //assertThat("OK\n");
-    mtxCpy(ss.allocation, (matrix)alc, 'v');
-    mtxCpy(ss.need, (matrix)nd, 'v');
-    memcpy(ss.available, ava, 3*sizeof(int));
-
-    return ss;
-}

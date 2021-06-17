@@ -40,12 +40,9 @@ sysStatus pre_allocate(sysStatus ss, request rq, int m, int n, int process){
     //content: allocate the requested resources from system to process
     sysStatus next_ss = createSysStatus(m, n);
     sysStatusCopy(&next_ss, &ss);
-    assertThat("OK\n");
 
     for(int i=0;i<ss.r_num;i++){
         next_ss.available[i] = ss.available[i] - rq.sequence[i];
-        printf("X: %d\n", ss.allocation[process][i]);
-        printf("Y: %d\n", ss.need[process][i]);
         next_ss.allocation[process][i] = ss.allocation[process][i] + rq.sequence[i];
         next_ss.need[process][i] = ss.need[process][i] - rq.sequence[i];
     }

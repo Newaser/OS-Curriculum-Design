@@ -1,4 +1,3 @@
-#include<stdarg.h>
 #include"functions.h"
 
 security securityCheck(sysStatus ss){

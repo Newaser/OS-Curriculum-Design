@@ -38,20 +38,16 @@ void mtxCpy(matrix dest, matrix origin, char mode){
     int o_row = _msize(dest)/sizeof(int*);
     int o_col = _msize(*dest)/sizeof(int);
 
-    printf("%d %d %d %d\n", row, col, o_row, o_col);
-
     if(row != o_row || col != o_col){
         printf("Function \"MtxCpy\" failed. Row numbers or col numbers do not match.\n");
         exit(0);
     }else {
         if(mode == 'v'){  //Value Mode
-            printf("OKK\n");
             for(int i=0;i<row;i++){
                 for(int j=0;j<col;j++){
-                    printf("%d %d\n", dest[i][j], origin[i][j]);
                     dest[i][j] = origin[i][j];
                 }
-            }printf("OKK\n");
+            }
 
         }else if(mode == 'm'){  //Memory Mode
 
