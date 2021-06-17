@@ -17,14 +17,16 @@ matrix createM(int row, int col){  //create a matrix
     return mtx;
 }
 
-void destoryM(matrix mtx){
-    int row = _msize(mtx)/sizeof(int*);
-    int col = _msize(*mtx)/sizeof(int);
+void destroyM(matrix mtx){
+    if(mtx != NULL){
+        int row = _msize(mtx)/sizeof(int*);
+        int col = _msize(*mtx)/sizeof(int);
 
-    for(int i=0;i<row;i++){
-       free(mtx[i]);
+        for(int i=0;i<row;i++){
+        free(mtx[i]);
+        }
+        free(mtx);
     }
-    free(mtx);
 }
 
 /*
@@ -161,7 +163,7 @@ void printM(matrix mtx, char mode){
     if(mode == ' '){
         for(int i=0;i<row;i++){
             for(int j=0;j<col;j++){
-                if(j == col){
+                if(j == col - 1){
                     printf("%d\n", mtx[i][j]);
                 }else{
                     printf("%d ", mtx[i][j]);
@@ -171,7 +173,7 @@ void printM(matrix mtx, char mode){
     }else if(mode == 'T'){
         for(int j=0;j<col;j++){
             for(int i=0;i<row;i++){
-                if(j = col){
+                if(j == col - 1){
                     printf("%d\n", mtx[i][j]);
                 }else{
                     printf("%d ", mtx[i][j]);
@@ -191,8 +193,8 @@ void printRow(matrix mtx, int the_row, char mode){
 
     if(mode == 'h'){
         for(int i=0;i<col;i++){
-            if(i == col){
-                printf("%d\n", mtx[the_row][i]);
+            if(i == col - 1){
+                printf("%d", mtx[the_row][i]);
             }else{
                 printf("%d ", mtx[the_row][i]);
             }
@@ -213,8 +215,8 @@ void printCol(matrix mtx, int the_col, char mode){
 
     if(mode == 'h'){
         for(int i=0;i<col;i++){
-            if(i == col){
-                printf("%d\n", mtx[i][the_col]);
+            if(i == col - 1){
+                printf("%d", mtx[i][the_col]);
             }else{
                 printf("%d ", mtx[i][the_col]);
             }

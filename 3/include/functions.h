@@ -1,3 +1,4 @@
+#include<io.h>
 #include<conio.h>
 #include"definitions.h"
 
@@ -59,8 +60,6 @@ void printArray(int* array, int len){
 
 
 //Concerning String:
-
-
 string upper(string str){
     int len = strlen(str);
 
@@ -68,7 +67,7 @@ string upper(string str){
     string upper_str = (string) malloc((len+1)*sizeof(char));
 
     for(int i=0;i<len+1;i++){
-        if(i == len + 1){
+        if(i == len){
             upper_str[i] = '\0';
         }else if(str[i] >= 'a' && str[i] <= 'z'){
             upper_str[i] = str[i] - distance;
@@ -87,7 +86,7 @@ string lower(string str){
     string lower_str = (string) malloc((len+1)*sizeof(char));
 
     for(int i=0;i<len+1;i++){
-        if(i == len + 1){
+        if(i == len){
             lower_str[i] = '\0';
         }else if(str[i] >= 'A' && str[i] <= 'Z'){
             lower_str[i] = str[i] + distance;
@@ -137,18 +136,21 @@ bool strAllInt(string str){  //If a string consists all of unsigned int except s
     
 }
 
+
+
 //Concerning structs:
-security createSecurity(int p_num){
-    security sc = {
-        Null,
-        (int*)malloc(p_num*sizeof(int))
-    };
+security* createSecurity(int p_num){
+    security* sc = (security*)malloc(sizeof(security));
+    sc->sequence = (int*)malloc(p_num*sizeof(int));
 
     return sc;
 }
 
-void destorySecurity(security sc){
-    free(sc.sequence);
+void destroySecurity(security* sc){
+    if(sc != NULL){
+        free(sc->sequence);
+        free(sc);
+    }
 }
 
 request createRequest(int r_num){
@@ -164,6 +166,11 @@ void destroyRequest(request rq){
     free(rq.sequence);
 };
 
+void alterRequest(request* rq, int r_num){
+    destroyRequest(*rq);
+    rq->sequence = (int*)malloc(r_num*sizeof(int));
+}
+
 sysStatus createSysStatus(int p_num, int r_num){
     sysStatus ss = {
         p_num,
@@ -177,135 +184,59 @@ sysStatus createSysStatus(int p_num, int r_num){
 }
 
 void destroySysStatus(sysStatus ss){
-    destoryM(ss.allocation);
-    destoryM(ss.need);
+    destroyM(ss.allocation);
+    destroyM(ss.need);
     free(ss.available);
-};
+}
 
-void sysStatusCopy(sysStatus* ss1, sysStatus* ss2){  //copy the values from ss2 to ss1
-    const int m = (ss1->p_num = ss2->p_num);
-    const int n = (ss1->r_num = ss2->r_num);
-    mtxCpy(ss1->allocation, ss2->allocation, 'v');
-    mtxCpy(ss1->need, ss2->need, 'v');
-    memcpy(ss1->available, ss2->available, n*sizeof(int));
+void alterSysStatus(sysStatus* ss, int p_num, int r_num){
+    destroySysStatus(*ss);
+    if(p_num != Null){
+        ss->p_num = p_num;
+    }
+    if(r_num != Null){
+        ss->r_num = r_num;
+    }
+
+    ss->allocation = createM(p_num, r_num);
+    ss->need = createM(p_num, r_num);
+    ss->available = (int*)malloc(r_num*sizeof(int));
+
+}
+
+bool sysStatusCopy(sysStatus* ss1, sysStatus* ss2){  //copy the values from ss2 to ss1
+    if (ss1->p_num != ss2->p_num || ss1->r_num != ss2->r_num){
+        return False;
+    }else{
+        const int m = ss1->p_num;
+        const int n = ss1->r_num;
+        //assertThat("OK\n");
+        mtxCpy(ss1->allocation, ss2->allocation, 'v');
+        mtxCpy(ss1->need, ss2->need, 'v');
+        memcpy(ss1->available, ss2->available, n*sizeof(int));
+
+        return True;
+    }
 }
 
 
 
-
-
-
-//Conerning The Algorithm:
-request getRequest(sysStatus ss){
-    //content: 1. Get a process's request from user's input; 
-    //content: 2. If q/quit input, exit.
-    const int m = ss.p_num;
-    const int n = ss.r_num;
-    int process;
-    int seq[n];
-    char input[32];
-    char* p = input + strlen("request") + 1;
-    int len;
-
-    while(True){
-        printf("(Banker's) ");
-        scanf("%[^\n]", input);
-        scanf("%c");
-        
-        if(strcmp(lower(input, strlen(input)), "q") == 0 || strcmp(lower(input, strlen(input)), "quit") == 0){
-            exit(0);
-        }else if(!allInt(input, strlen(input))){
-            printf("Invalid input!\n");
-        }else {
-            sscanf(p, "%d%n", &process, &len);
-            p += len + 1;
-
-            if(process >= m){
-                printf("Invalid process number!\n");
-                return EOF;
-            }else {
-                for(int i=0;i<n+1;i++){
-                    if(i > n){
-                        if(sscanf(p, "%d") != EOF){
-                            printf("Too many requests of resources!\n");
-                            return EOF;
-                        }
-                    }else {
-                        if(sscanf(p, "%d%n", seq + i, &len) == EOF){
-                            printf("Too few requests of resources!\n");
-                            return EOF;
-                        }else{
-                            p += len + 1;
-                        }
-                    }
-                }
-
-                request rq = createRequest(process, n);
-                rq.p_num = process;
-                memcpy(rq.sequence, seq, n*sizeof(int));
-
-                return rq;
+//Concerning file:
+bool findFile(path f_path, string dest_name){
+    long HANDLE;
+    struct _finddata_t f_data;
+    if((HANDLE = _findfirst(f_path, &f_data)) == -1L){
+        _findclose(HANDLE);
+        return False;
+    }else{
+        do{
+            if(strnSimilar(f_data.name, dest_name, strlen(f_data.name)-strlen(".txt"))){
+                _findclose(HANDLE);
+                return True;
             }
         }
-    }
-    
-
-}
-
-sysStatus importStatus(path f_path){
-    /*
-    import sysStatus data from a txt file
-    */
-    
-    FILE *data_f = fopen(f_path, "r");
-    //import p_num, r_num
-    int m;
-    int n;
-    fscanf(data_f, "%d %d", &m, &n);
-
-    //create a sysStatus var for receival
-    sysStatus ss = createSysStatus(m, n);
-    
-    //import allocation[m][n]
-    for(int i=0;i<m;i++){
-        for(int j=0;j<n;j++){
-            fscanf(data_f, "%d", &ss.allocation[i][j]);
-        }
-    }
-
-    //import need[m][n]
-    for(int i=0;i<m;i++){
-        for(int j=0;j<n;j++){
-            fscanf(data_f, "%d", &ss.need[i][j]);
-        }
-    }
-
-    //import available[n]
-    for(int i=0;i<n;i++){
-        fscanf(data_f, "%d", ss.available + i);
-    }
-
-    //If file invalid
-    fscanf(data_f, "%d");
-    if(!feof(data_f)){
-        fclose(data_f);
-        assertThat("Invalid data file!");
-        destroySysStatus(ss);
-    }else {  //Success
-        fclose(data_f);
-        return ss;
+        while(_findnext(HANDLE, &f_data) == 0);
+        _findclose(HANDLE);
+        return False;
     }
 }
-
-
-
-void securityAlarm(sysStatus ss){
-    security sc = securityCheck(ss);
-    if(sc.check){
-        printf("System is currently safe!\nThe security sequence is:\n");
-        printArray(sc.sequence, ss.p_num);
-    }else {
-        printf("System is not safe!\n");
-    }
-}
-
