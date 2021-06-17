@@ -45,6 +45,21 @@ void fill(int* array, int len, int value){
     }
 }
 
+void arrayCopy(int* array1, int* array2, int len){
+    for(int i=0;i<len;i++){
+        array1[i] = array2[i];
+    }
+}
+
+int* addArray(int* array1, int* array2, int len){
+    int* added = (int*)malloc(len*sizeof(int));
+    for(int i=0;i<len;i++){
+        added[i] = array1[i] + array2[i];
+    }
+
+    return added;
+}
+
 void printArray(int* array, int len){
     printf("[");
     for(int i=0;i<len;i++){
@@ -56,6 +71,15 @@ void printArray(int* array, int len){
     }
 }
 
+void printArrayLine(int* array, int len){
+    for(int i=0;i<len;i++){
+        if(i==len-1){
+            printf("%2d", array[i]);
+        }else {
+            printf("%2d ", array[i]);
+        }
+    }
+}
 
 
 
@@ -139,20 +163,6 @@ bool strAllInt(string str){  //If a string consists all of unsigned int except s
 
 
 //Concerning structs:
-security* createSecurity(int p_num){
-    security* sc = (security*)malloc(sizeof(security));
-    sc->sequence = (int*)malloc(p_num*sizeof(int));
-
-    return sc;
-}
-
-void destroySecurity(security* sc){
-    if(sc != NULL){
-        free(sc->sequence);
-        free(sc);
-    }
-}
-
 request createRequest(int r_num){
     request rq = {
         Null,

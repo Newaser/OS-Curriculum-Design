@@ -4,7 +4,7 @@ signal bankers(sysStatus* ss, request rq){
     /*
     Banker's Algorithm
     */
-   sysStatus pre_allocate(sysStatus ss, request rq, int m, int n, int process);
+   sysStatus pre_allocate(sysStatus ss, request rq);
 
     //Definition of row number and column number for process-resource matrix
     const int m = ss->p_num;
@@ -24,7 +24,7 @@ signal bankers(sysStatus* ss, request rq){
     }
 
     //pre-allocate resources
-    sysStatus next_ss = pre_allocate(*ss, rq, m, n, process);
+    sysStatus next_ss = pre_allocate(*ss, rq);
 
     //If system not safe, wait; if safe, success
     if(securityCheck(next_ss).check == False){
@@ -37,8 +37,12 @@ signal bankers(sysStatus* ss, request rq){
     }
 }
 
-sysStatus pre_allocate(sysStatus ss, request rq, int m, int n, int process){
+sysStatus pre_allocate(sysStatus ss, request rq){
     //content: allocate the requested resources from system to process
+    const int m = ss.p_num;
+    const int n = ss.r_num;
+    const int process = rq.p_num;
+
     sysStatus next_ss = createSysStatus(m, n);
     sysStatusCopy(&next_ss, &ss);
 

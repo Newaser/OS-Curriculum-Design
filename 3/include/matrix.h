@@ -194,9 +194,9 @@ void printRow(matrix mtx, int the_row, char mode){
     if(mode == 'h'){
         for(int i=0;i<col;i++){
             if(i == col - 1){
-                printf("%d", mtx[the_row][i]);
+                printf("%2d", mtx[the_row][i]);
             }else{
-                printf("%d ", mtx[the_row][i]);
+                printf("%2d ", mtx[the_row][i]);
             }
         }
     }else if(mode == 'v'){

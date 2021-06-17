@@ -120,16 +120,16 @@ void printStatus(sysStatus ss){
     printf("\n");
 
     //print table head
-    printf("PID\tAllocation\tNeed\n");
+    printf("PID\t\tAllocation\t\t\t  Need\n");
 
     //print table content
     for(int i=0;i<m;i++){
         //print PID
-        printf("%d\t", i);
+        printf("%2d\t\t", i);
 
         //print Allocation
         printRow(ss.allocation, i, 'h');
-        printf("\t\t");
+        printf("\t\t\t");
 
         //print Need
         printRow(ss.need, i, 'h');
@@ -210,7 +210,57 @@ void securityAlarm(security sc){
 }
 
 void printSafeAlloc(sysStatus ss){
-    /*
-    TODO: Print safe allocation according to sc.sequence
-    */
+    //get security status
+    security sc = securityCheck(ss);
+    if(!sc.check){
+        printf("Print safe Allocation failed. System is currently not safe!\n");
+        return;
+    }
+    
+    //define m, n, process
+    const int m = ss.p_num;
+    const int n = ss.r_num;
+    
+    int process;
+    int* added_array;
+
+    //create a sysStatus for demostrating
+    sysStatus demo = createSysStatus(m, n);
+    sysStatusCopy(&demo, &ss);
+
+    //print table head
+    printf("PID\t\tAvailable\t\t\tAllocation\t\t\t  Need\t\t\t  Available + Allocation\n");
+
+    //print table content
+    for(int i=0;i<m;i++){
+        //get process number
+        process = sc.sequence[i];
+
+        //print PID
+        printf("%2d\t\t", process);
+
+        //print Available
+        printArrayLine(demo.available, n);
+        printf("\t\t\t");
+
+        //print Allocation
+        printRow(demo.allocation, process, 'h');
+        printf("\t\t\t");
+
+        //print Need
+        printRow(demo.need, process, 'h');
+        printf("\t\t\t");
+
+        //print Available + Allocation
+        added_array = addArray(demo.available, demo.allocation[process], n);
+        printArrayLine(added_array, n);
+        printf("\n");
+
+        //next status
+        fill(demo.allocation[process], n, 0);
+        fill(demo.need[process], n, 0);
+        arrayCopy(demo.available, added_array, n);
+
+    }
+    printf("\n");
 }
