@@ -1,6 +1,7 @@
 #include"bankers.h"
 
 void printHelp();                               //print help information
+bool listData();                                //list txt files which contain data
 bool importStatus(string, sysStatus*);          //from file path import sysStatus      
 void printStatus(sysStatus);                    //print current p&r status
 bool getRequest(string,sysStatus,request*);  //get request information from a string, constrained by sysStatus
@@ -9,13 +10,16 @@ void securityAlarm(security);                   //alarm the security status
 void printSafeAlloc(sysStatus);       //print the process of resource allocation according to security.sequence
 
 void printHelp(){
-    printf("Info of all commands are down below:\n");
+    printf("Info of all commands are down below (All commands are case insensitive):\n\n");
     printf("\"help\"\n");
         printf("    Show help information.\n\n\n");
     printf("\"q/quit\"\n");
         printf("    Quit.\n\n\n");
-    printf("\"import [file_path]\"\n");
-        printf("    From [file_path] import processes and resources status data.\n\n\n");
+    printf("\"lsData/listData\"\n");
+        printf("    List file names of all \".txt\" data.\n\n\n");
+    printf("\"import [file_name]\"\n");
+        printf("    From DS import processes and resources status data named [file_name].\n");
+        printf("  Caution, [file_name] does not contain the suffix.\n\n\n");
     printf("\"status\"\n");
         printf("    Print current processes and resources status.\n\n\n");
     printf("\"request [request_seq]\"\n");
@@ -27,7 +31,27 @@ void printHelp(){
         printf("    Judge if the current status is safe. If it is, give a sequence\n");
         printf("  of resource allocation.\n\n\n");
     printf("\"SafeAlloc/SafeAllocation\"\n");
-        printf("    Demostrate a possible process of resource allocation.\n\n\n");
+        printf("    Demostrate a possible process of safe resource allocation.\n\n\n");
+}
+
+bool listData(){
+    long HANDLE;
+    struct _finddata_t f_data;
+    if((HANDLE = _findfirst("..\\DS\\*.txt", &f_data)) == -1L){
+        _findclose(HANDLE);
+        return False;
+    }else{
+        char file_name[32];
+        do{
+            memset(file_name, '\0', 32);
+            strncpy(file_name, f_data.name, strlen(f_data.name)-strlen(".txt"));
+            printf("%s  ", file_name);
+        }
+        while(_findnext(HANDLE, &f_data) == 0);
+        _findclose(HANDLE);
+        printf("\n");
+        return True;
+    }
 }
 
 bool importStatus(string str, sysStatus* ss){
@@ -36,8 +60,8 @@ bool importStatus(string str, sysStatus* ss){
     char file_name[16];
     char* read = str + strlen("import ");
     sscanf(read, "%s", file_name);
+    strcat(file_name, ".txt");
     strcat(f_path, file_name);
-    strcat(f_path, ".txt");
 
     //Search if the file exists
     if(!findFile("..\\DS\\*.txt", file_name)){

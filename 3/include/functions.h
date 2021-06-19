@@ -1,5 +1,6 @@
 #include<io.h>
 #include<conio.h>
+#include<windows.h>
 #include"definitions.h"
 
 //Concerning I/O:
@@ -14,6 +15,26 @@ void pause(char *prompt, int ascii){
         getch();
     }else {
         while(getch() != ascii);
+    }
+}
+
+bool moveCursor(int x, int y, char mode) {
+    if(mode == 'a'){  //Absoulately
+        COORD next_coord = {x, y};
+        HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+        SetConsoleCursorPosition(hOut, next_coord);
+    }else if(mode == 'r'){  //Relatively
+        HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+        CONSOLE_SCREEN_BUFFER_INFO bInfo;
+        GetConsoleScreenBufferInfo(hOut, &bInfo);
+        COORD next_coord = bInfo.dwCursorPosition;
+        next_coord.X += x;
+        next_coord.Y += y;
+        SetConsoleCursorPosition(hOut, next_coord);
+
+    return True;
+    }else{
+        return False;
     }
 }
 
@@ -240,7 +261,7 @@ bool findFile(path f_path, string dest_name){
         return False;
     }else{
         do{
-            if(strnSimilar(f_data.name, dest_name, strlen(f_data.name)-strlen(".txt"))){
+            if(strcmp(f_data.name, dest_name) == 0){
                 _findclose(HANDLE);
                 return True;
             }
