@@ -14,10 +14,15 @@ int main(){
     printf("Enter \"help\" for more information.\n");
     while(True){  //command receiving loop
         command = getCommand();
+
         if(strSimilar(command, "q") || strSimilar(command, "quit")){
             exit(0);
         }else if(strSimilar(command, "help")){
             printHelp();
+        }else if(strSimilar(command, "lsData") || strSimilar(command, "listData")){
+            if(!listData()){
+                printf("No data. Please add at least one.");
+            }
         }else if(strnSimilar(command, "import ", strlen("import "))){
             if(importStatus(command, &ss)){
                 have_status = True;
@@ -60,11 +65,20 @@ int main(){
 
 
 string getCommand(){
-    string command = (string)malloc(32*sizeof(char));
-    printf("(Banker's) ");
-    scanf("%[^\n]", command);
     int eat;
-    scanf("%c", &eat);
+    string command = (string)malloc(32*sizeof(char));
+    memset(command, '\0', 32);
+    
+    printf("(Banker's) ");
+    while(True){
+        scanf("%[^\n]", command);
+        scanf("%c", &eat);
+        if(command[0] == '\0'){  //If the command is null (which means the user pressed "enter" directly)
+            moveCursor(strlen("(Banker's) "), -1, 'r');
+        }else{
+            break;
+        }
+    }
 
     return command;
 }
