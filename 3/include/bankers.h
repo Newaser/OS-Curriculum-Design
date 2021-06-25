@@ -13,7 +13,7 @@ signal bankers(sysStatus* ss, request rq){
 
     //If request > need, error
     for(int i=0; i<n; i++){
-        if(rq.sequence[i] > (ss->need, process, i, n))
+        if(rq.sequence[i] > ss->need[process][i])
             return Error;
     }
 
